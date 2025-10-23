@@ -1,0 +1,35 @@
+﻿@model IEnumerable<VehiculoListadoDto>
+@{
+    ViewData["Title"] = "Consulta de Vehículos";
+}
+<h3 class="mb-3">@ViewData["Title"]</h3>
+
+<div class="card soft-card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Cédula</th>
+                        <th>Nombre</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th class="text-end">Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Model)
+                    {
+                        <tr>
+                            <td>@x.Cedula</td>
+                            <td>@x.Nombre</td>
+                            <td>@x.Marca</td>
+                            <td>@x.Modelo</td>
+                            <td class="text-end">@x.Precio.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

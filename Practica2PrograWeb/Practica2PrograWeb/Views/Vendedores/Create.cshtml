@@ -1,0 +1,89 @@
+﻿@model Vendedor
+@{
+    ViewData["Title"] = "Registro de Vendedores";
+}
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card soft-card">
+            <div class="card-body">
+                <h3 class="mb-3">@ViewData["Title"]</h3>
+
+                @if (TempData["Ok"] != null)
+                {
+                    <div class="alert alert-success">@TempData["Ok"]</div>
+                }
+
+                <form asp-action="Create" method="post" id="form-vendedor">
+                    <div class="mb-3">
+                        <label asp-for="Cedula" class="form-label"></label>
+                        <div class="input-group">
+                            <input asp-for="Cedula" class="form-control" id="cedulaInput" />
+                            <button type="button" class="btn btn-accent" id="btnLookup" title="Consultar API">Consultar</button>
+                        </div>
+                        <span asp-validation-for="Cedula" class="text-danger"></span>
+                        <div class="form-text">Consulta el nombre desde la API de cédulas.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Nombre" class="form-label"></label>
+                        <input asp-for="Nombre" class="form-control" id="nombreInput" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Correo" class="form-label"></label>
+                        <input asp-for="Correo" class="form-control" />
+                        <span asp-validation-for="Correo" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                       
+                    </div>
+
+                    <div id="rawJson" class="collapse mt-3">
+                        <pre class="soft-pre" id="jsonBox">{}</pre>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const btn = document.getElementById('btnLookup');
+        const cedula = document.getElementById('cedulaInput');
+        const nombre = document.getElementById('nombreInput');
+        const jsonBox = document.getElementById('jsonBox');
+
+        btn.addEventListener('click', async () => {
+          const q = (cedula.value || '').trim();
+          if (!q) { alert('Digite una cédula.'); return; }
+          btn.disabled = true; btn.textContent = 'Consultando…';
+
+          try {
+            const res = await fetch(`/cedulas/lookup?q=${encodeURIComponent(q)}`);
+            const data = await res.json();
+            if (!data.ok) throw new Error(data.error || 'No se pudo consultar.');
+            if (data.nombre && !nombre.value) nombre.value = data.nombre;
+            jsonBox.textContent = JSON.stringify(JSON.parse(data.raw), null, 2);
+            toast('Consulta exitosa');
+          } catch (err) {
+            toast(err.message || 'Error en la consulta', true);
+          } finally {
+            btn.disabled = false; btn.textContent = 'Consultar';
+          }
+        });
+
+        function toast(msg, isError){
+          const bar = document.createElement('div');
+          bar.className = 'soft-toast' + (isError ? ' soft-toast-error' : '');
+          bar.textContent = msg;
+          document.body.appendChild(bar);
+          setTimeout(()=> bar.classList.add('show'), 10);
+          setTimeout(()=> { bar.classList.remove('show'); setTimeout(()=>bar.remove(),300); }, 2500);
+        }
+    </script>
+}

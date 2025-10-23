@@ -1,0 +1,55 @@
+﻿@model Vehiculo
+@{
+    ViewData["Title"] = "Registro de Vehículos";
+}
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card soft-card">
+            <div class="card-body">
+                <h3 class="mb-3">@ViewData["Title"]</h3>
+                @if (TempData["Ok"] != null)
+                {
+                    <div class="alert alert-success">@TempData["Ok"]</div>
+                }
+
+                <form asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label asp-for="Marca" class="form-label"></label>
+                        <input asp-for="Marca" class="form-control" />
+                        <span asp-validation-for="Marca" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Modelo" class="form-label"></label>
+                        <input asp-for="Modelo" class="form-control" />
+                        <span asp-validation-for="Modelo" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Color" class="form-label"></label>
+                        <input asp-for="Color" class="form-control" />
+                        <span asp-validation-for="Color" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Precio" class="form-label"></label>
+                        <input asp-for="Precio" class="form-control" />
+                        <span asp-validation-for="Precio" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Vendedor (Cédula)</label>
+                        <select asp-for="Vendedor" class="form-select" asp-items="ViewBag.Vendedores">
+                            <option value="">-- Selecciona un vendedor --</option>
+                        </select>
+                        <span asp-validation-for="Vendedor" class="text-danger"></span>
+                        <div class="form-text">
+                            ¿Falta el vendedor? <a asp-controller="Vendedores" asp-action="Create">Regístralo aquí</a>.
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
